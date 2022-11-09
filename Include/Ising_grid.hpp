@@ -3,6 +3,7 @@
 
 
 #include <armadillo>
+#include <iostream>
 #include <iomanip>
 #include <string>
 
