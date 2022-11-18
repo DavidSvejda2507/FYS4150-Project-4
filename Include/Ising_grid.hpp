@@ -41,7 +41,7 @@ class Ising_grid
         void Do_Spin_Flip();
 
         void Simulate_steps(int burn, int n, int step);
-        void Log_steps(int burn, int n, int step, string filename, int log_freq);
+        void Log_steps(int burn, int n, int step, std::string filename, int log_freq);
 
         double Get_eps(){return eps;}
         double Get_abs_m(){return abs_m;}
