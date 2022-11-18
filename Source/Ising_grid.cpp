@@ -100,6 +100,10 @@ void Ising_grid::Log_steps(int burn, int n, int step, string filename, int log_f
     double eps_sum=0, eps2_sum=0, m_sum=0, m2_sum=0, eps_, m;
     ofstream file;
     file.open(filename);
+    file << "eps" << '\t'
+        << "abs_m" << '\t'
+        << "Cv" << '\t'
+        << "chi" << endl;
     for (int i = 0; i < burn; i++){
         Do_Spin_Flip();
     }

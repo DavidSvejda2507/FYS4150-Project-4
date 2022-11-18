@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 data = []
 for T in ("1","2.4"):
     for A in (0,1):
-        data.append((np.genfromtxt(f"Data/Problem5/T_{T}_A_{A}.txt", delimiter='\t'), T, A))
+        data.append((np.genfromtxt(f"Data/Problem5/T_{T}_A_{A}.txt", delimiter='\t', skip_header=1), T, A))
         
     
 observables = ["eps","abs m","Cv","chi"]
