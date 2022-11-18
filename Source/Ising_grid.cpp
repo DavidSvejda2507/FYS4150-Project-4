@@ -33,7 +33,7 @@ void Ising_grid::Align(){
     grid.replace(1, 0);
 }
 
-double Ising_grid::Calc_eps(){
+int Ising_grid::Calc_E(){
     int sum = 0;
     for (int i = L; i < 2*L; i++){
         for (int j = L; j < 2*L; j++){
@@ -42,6 +42,11 @@ double Ising_grid::Calc_eps(){
             // To correct this we shift by -2 at the end
         }
     }
+    return sum;
+}
+
+double Ising_grid::Calc_eps(){
+    int sum = Calc_E();
     return (((double)sum/grid.n_elem)-2);
 }
 
@@ -131,6 +136,24 @@ void Ising_grid::Log_steps(int burn, int n, int step, string filename, int log_f
                 << chi << endl;
         }
         
+    }
+    file.close();
+}
+
+void Ising_grid::Log_steps_hist(int burn, int n, int step, string filename){
+    double E;
+    ofstream file;
+    file.open(filename);
+    file << "eps" << endl;
+    for (int i = 0; i < burn; i++){
+        Do_Spin_Flip();
+    }
+    for (int i = 1; i < n; i++){
+        for (int j = 0; j < step; j++){
+            Do_Spin_Flip();
+        }
+        E = Calc_E();
+        file << E << endl;
     }
     file.close();
 }

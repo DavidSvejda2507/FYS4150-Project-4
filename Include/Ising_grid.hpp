@@ -35,6 +35,7 @@ class Ising_grid
         Ising_grid(int L, double T, int seed);
 
         double Calc_eps();
+        int Calc_E();
         double Get_m();
 
         void Align();
@@ -42,6 +43,7 @@ class Ising_grid
 
         void Simulate_steps(int burn, int n, int step);
         void Log_steps(int burn, int n, int step, std::string filename, int log_freq);
+        void Log_steps_hist(int burn, int n, int step, std::string filename);
 
         double Get_eps(){return eps;}
         double Get_abs_m(){return abs_m;}

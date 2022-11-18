@@ -10,3 +10,8 @@ Problem 5:
 ```bash
 g++ Source/*.cpp problem5.cpp -o main.exe -larmadillo -I Include/
 ```
+
+Problem 6:
+```bash
+g++ Source/*.cpp problem6.cpp -o main.exe -larmadillo -I Include/
+```
