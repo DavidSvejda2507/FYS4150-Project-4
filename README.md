@@ -1,17 +1,16 @@
 # FYS4150-Project-4
 
-Compile the test using
-
+Compile and run the test using
 ```bash
-g++ Source/*.cpp tester.cpp -o test.exe -larmadillo -I Include/
+make test
 ```
 
 Problem 5:
 ```bash
-g++ Source/*.cpp problem5.cpp -o main.exe -larmadillo -I Include/
+make Problem5
 ```
 
 Problem 6:
 ```bash
-g++ Source/*.cpp problem6.cpp -o main.exe -larmadillo -I Include/
+make Problem6
 ```
