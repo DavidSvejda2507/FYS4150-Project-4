@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <tuple>
 
 class Ising_grid
 {
@@ -41,6 +42,8 @@ class Ising_grid
         void Align();
         void Do_Spin_Flip();
 
+        std::tuple<double, double> MCMC_Run(int n);
+        std::tuple<double, double, double, double> MCMC_Run(int n, int step);
         void Simulate_steps(int burn, int n, int step);
         void Log_steps(int burn, int n, int step, std::string filename, int log_freq);
         void Log_steps_hist(int burn, int n, int step, std::string filename);

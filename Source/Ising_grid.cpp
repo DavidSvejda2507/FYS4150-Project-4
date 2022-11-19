@@ -77,28 +77,37 @@ void Ising_grid::Do_Spin_Flip(){
     }
 }
 
-void Ising_grid::Simulate_steps(int burn, int n, int step){
-    double eps_sum=0, eps2_sum=0, m_sum=0, m2_sum=0, eps_, m;
-    for (int i = 0; i < burn; i++){
-        Do_Spin_Flip();
-    }
-    for (int i = 0; i < n; i++){
-        for (int j = 0; j < step; j++){
+tuple<double, double> Ising_grid::MCMC_Run(int n){
+    for (int j = 0; j < n; j++){
             Do_Spin_Flip();
         }
-        eps_ = Calc_eps();
-        m = Get_m();
+    return make_tuple(Calc_eps(), Get_m());
+}
+
+tuple<double, double, double, double> Ising_grid::MCMC_Run(int n, int step){
+    double eps_sum=0, eps2_sum=0, m_sum=0, m2_sum=0, eps_, m;
+    
+    for (int i = 0; i < n; i++){
+        tie(eps_, m) = MCMC_Run(step);
         eps_sum += eps_;
         eps2_sum += eps_*eps_;
         m_sum += abs(m);
         m2_sum += m*m;
     }
+
+    return make_tuple(eps_sum, eps2_sum, m_sum, m2_sum);
+}
+
+void Ising_grid::Simulate_steps(int burn, int n, int step){
+    double eps_sum=0, eps2_sum=0, m_sum=0, m2_sum=0, eps_, m;
+
+    MCMC_Run(burn);
+    tie(eps_sum, eps2_sum, m_sum, m2_sum) = MCMC_Run(n, step);
+
     eps = eps_sum/n;
     abs_m = m_sum/n;
     Cv = (eps2_sum - eps*eps_sum)/(n*T*T);
     chi = (m2_sum - abs_m*m_sum)/(n*T);
-    if (abs_m < 0.5){abs_m = 1 - 2*abs_m;}
-    else{abs_m = 2*abs_m - 1;}
 }
 
 void Ising_grid::Log_steps(int burn, int n, int step, string filename, int log_freq){
@@ -109,15 +118,12 @@ void Ising_grid::Log_steps(int burn, int n, int step, string filename, int log_f
         << "abs_m" << '\t'
         << "Cv" << '\t'
         << "chi" << endl;
-    for (int i = 0; i < burn; i++){
-        Do_Spin_Flip();
-    }
+    
+    MCMC_Run(burn);
+
     for (int i = 1; i < n; i++){
-        for (int j = 0; j < step; j++){
-            Do_Spin_Flip();
-        }
-        eps_ = Calc_eps();
-        m = Get_m();
+        tie(eps_, m) = MCMC_Run(step);
+        
         eps_sum += eps_;
         eps2_sum += eps_*eps_;
         m_sum += abs(m);
@@ -145,13 +151,9 @@ void Ising_grid::Log_steps_hist(int burn, int n, int step, string filename){
     ofstream file;
     file.open(filename);
     file << "eps" << endl;
-    for (int i = 0; i < burn; i++){
-        Do_Spin_Flip();
-    }
+    MCMC_Run(burn);
     for (int i = 1; i < n; i++){
-        for (int j = 0; j < step; j++){
-            Do_Spin_Flip();
-        }
+        MCMC_Run(step);
         E = Calc_E();
         file << E << endl;
     }
