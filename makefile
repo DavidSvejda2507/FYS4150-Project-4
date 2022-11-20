@@ -46,3 +46,6 @@ time_seq:
 	./main.exe 10
 
 Problem7: comp_Problem_7_seq time comp_Problem_7_parallel time_seq
+
+Problem8:
+	g++ Source/*.cpp problem8.cpp -o main.exe -fopenmp -larmadillo -I Include/
