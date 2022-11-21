@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
                 n_L = 1;
             }
             else{
-                cout << "Pleas supply four or five arguments (T_min(double) T_max(double) n_T(int) n(int) [L(int)]) or no arguments" << endl;
+                cout << "Please supply four or five arguments (T_min(double) T_max(double) n_T(int) n(int) [L(int)]) or no arguments" << endl;
                 return 1;
             }
         }
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]){
     for (int l = 0; l < n_L; l++){
         for (int i = 0; i < n_T; i++){
             count++;
-            cout << count << "/" << 5*n_T << "    ";
+            cout << count << "/" << n_L*n_T << "    ";
             T = (T_min*(n_T-i-1) + T_max*(i)) / (n_T - 1);
             file << Run_openMP(n_sub, T, L[l], n) << endl;
         }
