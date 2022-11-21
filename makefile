@@ -49,3 +49,12 @@ Problem7: comp_Problem_7_seq time comp_Problem_7_parallel time_seq
 
 Problem8:
 	g++ Source/*.cpp problem8.cpp -o main.exe -fopenmp -larmadillo -I Include/
+
+Problem8_zoom1_:
+	./main.exe 2.25 2.4 10 300000 20
+	./main.exe 2.25 2.35 10 300000 40
+	./main.exe 2.225 2.325 10 300000 60
+	./main.exe 2.15 2.3 15 500000 80
+	./main.exe 2.1 2.2 10 1000000 100
+
+Problem8_zoom1: Problem8 Problem8_zoom1_

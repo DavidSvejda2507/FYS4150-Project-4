@@ -22,7 +22,7 @@ Ising_grid::Ising_grid(int L_, double T_, int seed){
     // dE = {1,1,1,1,1};
     for (int i = 0; i < 5; i++){
         if (i>1){dE[i] = 1;}
-        else{dE[i] = exp(-2*(2-i)/T);}
+        else{dE[i] = exp(-4*(2-i)/T);}
     }
     // for (int i = 0; i<5; i++){
     //     cout << dE[i] << endl;

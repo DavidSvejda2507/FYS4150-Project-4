@@ -54,8 +54,9 @@ string Run_openMP(int n_sub, double T, int L, int n, int burn = 500, int step = 
 }
 
 int main(int argc, char *argv[]){
-    int n_sub = 8, n, L, n_T, count = 0;
+    int n_sub = 8, n, n_T, n_L = 5, count = 0;
     double T_min, T_max, T;
+    int L[5] = {20, 40, 60, 80, 100};
     if (argc == 1){
         T_min = 2.1;
         T_max = 2.4;
@@ -64,14 +65,24 @@ int main(int argc, char *argv[]){
     }
     else {
         if (argc == 5){
-        T_min = stod(argv[1]);
-        T_max = stod(argv[2]);
-        n_T = stoi(argv[3]);
-        n = stoi(argv[4]);
+            T_min = stod(argv[1]);
+            T_max = stod(argv[2]);
+            n_T = stoi(argv[3]);
+            n = stoi(argv[4]);
         }
         else{
-            cout << "Pleas supply three arguments (T_min(double) T_max(double) n_T(int) n(int)) or no arguments" << endl;
-            return 1;
+            if (argc == 6){
+                T_min = stod(argv[1]);
+                T_max = stod(argv[2]);
+                n_T = stoi(argv[3]);
+                n = stoi(argv[4]);
+                L[0] = stoi(argv[5]);
+                n_L = 1;
+            }
+            else{
+                cout << "Pleas supply four or five arguments (T_min(double) T_max(double) n_T(int) n(int) [L(int)]) or no arguments" << endl;
+                return 1;
+            }
         }
     }
 
@@ -83,12 +94,12 @@ int main(int argc, char *argv[]){
     }
     file << "# L \t T \t n \t eps \t Cv \t abs_m \t chi" << endl;
 
-    for (int L = 20; L < 110; L += 20){
+    for (int l = 0; l < n_L; l++){
         for (int i = 0; i < n_T; i++){
             count++;
             cout << count << "/" << 5*n_T << "    ";
             T = (T_min*(n_T-i-1) + T_max*(i)) / (n_T - 1);
-            file << Run_openMP(n_sub, T, L, n) << endl;
+            file << Run_openMP(n_sub, T, L[l], n) << endl;
         }
     }
 }

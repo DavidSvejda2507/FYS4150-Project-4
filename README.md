@@ -30,6 +30,6 @@ make Problem8
 or
 ```bash
 make Problem8
-./main.exe <T_min (double)> <T_max(double)> <n_T(int)> <n(int)>
+./main.exe <T_min (double)> <T_max(double)> <n_T(int)> <n(int)> [<L(int)>]
 ```
 By default this will run with 2.1 2.4 20 100.000. The results will be appended to the output file.
