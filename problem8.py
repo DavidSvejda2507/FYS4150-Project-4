@@ -33,12 +33,17 @@ def f_74(beta, x):
 
 model_Cv = odr.Model(f_log)
 model_Chi = odr.Model(f_74)
-beta0_Cv = [2.3, 2, -1e-4, 3, 1e-2]
-beta0_Chi = [2.3, 1e-2, 2e-9, 5e-2, 1e-2]
+beta0_Cv = [2.3, 0.2, -1e-4, 3, 1e-2]
+beta0_Chi = [2.3, 2e-1, 2e-5, 1e-3, 2e-2]
 
 Tc_list = []
 
-error_scale = [1e-2, 1e-5, 1e-2, 5e-4]
+
+error_scale =  {20: [1e-2, 1e-4, 1e-2, 5e-4],
+                40: [1e-2, 3e-5, 2e-2, 7e-4],
+                60: [1e-2, 1e-5, 1e-2, 5e-4],
+                80: [1e-2, 1e-5, 2e-2, 7e-4],
+               100: [1e-2, 1e-5, 3e-2, 1e-3]}
 
 for L in (20,40,60,80,100):
 # for L in (80,):
@@ -64,7 +69,7 @@ for L in (20,40,60,80,100):
     output_Cv = myodr_Cv.run()
     output_Chi = myodr_Chi.run()
     
-    output_Chi.pprint()
+    # output_Chi.pprint()
     
     Tc_list.append((output_Cv.beta[0], output_Cv.sd_beta[0], L))
     Tc_list.append((output_Chi.beta[0], output_Chi.sd_beta[0], L))
@@ -72,13 +77,14 @@ for L in (20,40,60,80,100):
     
     T_ = np.arange(np.min(T), np.max(T), 1e-3, float)
     
+    for i, (obs, ax) in enumerate(zip(observables, axes)):
+        ax.errorbar(T, L_data[:, i+3].astype(float), error_scale[L][i]*np.power(weights, -0.5), fmt = "_")
+    
     ax2.plot(T_, f_log(output_Cv.beta, T_), "r-")
     # ax4.plot(T_, f_74(beta0_Cv, T_), "b-")
     
     ax4.plot(T_, f_74(output_Chi.beta, T_), "r-")
-    
-    for i, (obs, ax) in enumerate(zip(observables, axes)):
-        ax.errorbar(T, L_data[:, i+3].astype(float), error_scale[i]*np.power(weights, -0.5), fmt = ".")
+    # ax4.plot(T_, f_74(beta0_Chi, T_), "b-")
         
     
     
@@ -87,3 +93,40 @@ for L in (20,40,60,80,100):
     plt.savefig(f"Data/Problem8/L={L}.png")
     
 # print(Tc_list)
+
+def f_lin(beta, x):
+    """Linear model for fitting Tc(L = inf)
+
+    Args:
+        beta (np.array): length of at least 2
+        x (np.array): input data
+
+    Returns:
+        y (np.array): Output data
+    """    
+    return beta[0]*x + beta[1]
+
+
+Tc_list = np.array(list(filter(lambda x: 0 < x[1] < 1 and x[0] < 2.34, Tc_list)))
+print(Tc_list)
+
+model_lin = odr.Model(f_lin)
+y = Tc_list[:,0]
+weights_lin = np.power(Tc_list[:,1], -2)
+x = np.power(Tc_list[:,2], -1)
+Data = odr.Data(x, y, weights_lin)
+odr_lin = odr.ODR(Data, model_lin, (1, 2.2))
+output = odr_lin.run()
+
+L_range = np.arange(0, 0.05, 0.01)
+
+plt.figure()
+plt.errorbar(x, y, Tc_list[:,1], fmt = "_")
+plt.plot(L_range, f_lin(output.beta, L_range), "r-")
+plt.xlabel("$L^{-1}$")
+plt.ylabel("Tc")
+plt.tight_layout()
+plt.savefig("Data/Problem8/Tc_plot.png")
+
+print("\n")
+print(f"Tc = {output.beta[0]} +/- {output.sd_beta[0]}")
