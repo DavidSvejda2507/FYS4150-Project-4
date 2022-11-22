@@ -23,6 +23,6 @@ for i in range(len(observables)):
         # plt.legend()
         
         plt.title(f"eps for T={data[j][1]}")
-        plt.savefig(f"Data/Problem6/T={data[j][1]}.png")
+        plt.savefig(f"Data/Problem6/T={data[j][1]}.pdf")
         
     
