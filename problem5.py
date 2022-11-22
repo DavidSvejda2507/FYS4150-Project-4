@@ -22,6 +22,6 @@ for i in range(4):
     plt.ylabel(xl[i])
     plt.xlabel("Number of montecarlo cycles")
     plt.show()
-    plt.savefig(f"Data/Problem5/{imgnm[i]}.png")
+    plt.savefig(f"Data/Problem5/{imgnm[i]}.pdf")
         
     
