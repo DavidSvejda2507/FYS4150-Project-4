@@ -147,7 +147,7 @@ plt.xlabel("$L^{-1}$")
 plt.ylabel("Tc")
 plt.legend()
 plt.tight_layout()
-plt.savefig("Data/Problem8/Tc_plot.png")
+plt.savefig("Data/Problem8/Tc_plot.pdf")
 
 print("\n")
 print(f"Using Cv: Tc = {output_Cv.beta[1]} +/- {output_Cv.sd_beta[1]}")
