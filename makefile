@@ -67,3 +67,12 @@ Problem8_zoom2_:
 	./main.exe 2.25 2.3 10 1500000 100
 
 Problem8_zoom2: Problem8 Problem8_zoom2_
+
+Problem8_zoom3_:
+	./main.exe 2.4 2.5 20 500000 20
+	./main.exe 2.28 2.4 15 1000000 40
+	./main.exe 2.31 2.35 7 700000 80
+	./main.exe 2.2 2.25 10 1500000 100
+	./main.exe 2.3 2.35 10 1500000 100
+
+Problem8_zoom3: Problem8 Problem8_zoom3_
