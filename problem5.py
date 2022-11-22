@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+#reads file consisting of: epsilon, abs_m, Cv, chi
 data = []
 for T in ("1","2.4"):
     for A in (0,1):
