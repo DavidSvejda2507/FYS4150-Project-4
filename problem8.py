@@ -33,10 +33,19 @@ def f_74(beta, x):
 
 model_Cv = odr.Model(f_log)
 model_Chi = odr.Model(f_74)
-beta0_Cv = [2.3, 0.2, -1e-4, 3, 1e-2]
-beta0_Chi = [2.3, 2e-1, 2e-5, 1e-3, 2e-2]
+beta0_Cv = {20: [2.3, 0.2, -1e-3, 3, 1e-2],
+            40: [2.3, 0.2, -1e-3, 3, 1e-2],
+            60: [2.3, 0.2, -1e-4, 3, 1e-2],
+            80: [2.3, 0.2, -1e-4, 3, 1e-2],
+           100: [2.3, 0.2, -1e-4, 3, 1e-2]}
+beta0_Chi = {20: [2.4, 2e-1, 2.2e-5, 1e-3, 2e-2],
+             40: [2.3, 2e-1, 2e-5, 1e-3, 2e-2],
+             60: [2.3, 2e-1, 2e-5, 1e-3, 2e-2],
+             80: [2.3, 2e-1, 2e-5, 1e-3, 2e-2],
+            100: [2.3, 2e-1, 2e-5, 1e-3, 2e-2]}
 
-Tc_list = []
+Tc_list_Cv = []
+Tc_list_Chi = []
 
 
 error_scale =  {20: [1e-2, 1e-4, 1e-2, 5e-4],
@@ -64,15 +73,15 @@ for L in (20,40,60,80,100):
     weights = 1e-6 * L_data[:, 2].astype(int)
     Data_Cv = odr.Data(T, Cv, weights)
     Data_Chi = odr.Data(T, Chi, weights)
-    myodr_Cv = odr.ODR(Data_Cv, model_Cv, beta0_Cv)
-    myodr_Chi = odr.ODR(Data_Chi, model_Chi, beta0_Cv)
+    myodr_Cv = odr.ODR(Data_Cv, model_Cv, beta0_Cv[L])
+    myodr_Chi = odr.ODR(Data_Chi, model_Chi, beta0_Chi[L])
     output_Cv = myodr_Cv.run()
     output_Chi = myodr_Chi.run()
     
     # output_Chi.pprint()
     
-    Tc_list.append((output_Cv.beta[0], output_Cv.sd_beta[0], L))
-    Tc_list.append((output_Chi.beta[0], output_Chi.sd_beta[0], L))
+    Tc_list_Cv.append((output_Cv.beta[0], output_Cv.sd_beta[0], L))
+    Tc_list_Chi.append((output_Chi.beta[0], output_Chi.sd_beta[0], L))
     
     
     T_ = np.arange(np.min(T), np.max(T), 1e-3, float)
@@ -81,10 +90,10 @@ for L in (20,40,60,80,100):
         ax.errorbar(T, L_data[:, i+3].astype(float), error_scale[L][i]*np.power(weights, -0.5), fmt = "_")
     
     ax2.plot(T_, f_log(output_Cv.beta, T_), "r-")
-    # ax4.plot(T_, f_74(beta0_Cv, T_), "b-")
+    # ax2.plot(T_, f_log(beta0_Cv[L], T_), "b-")
     
     ax4.plot(T_, f_74(output_Chi.beta, T_), "r-")
-    # ax4.plot(T_, f_74(beta0_Chi, T_), "b-")
+    # ax4.plot(T_, f_74(beta0_Chi[L], T_), "b-")
         
     
     
@@ -107,26 +116,39 @@ def f_lin(beta, x):
     return beta[0]*x + beta[1]
 
 
-Tc_list = np.array(list(filter(lambda x: 0 < x[1] < 1 and x[0] < 2.34, Tc_list)))
-print(Tc_list)
+# Tc_list = np.array(list(filter(lambda x: 0 < x[1] < 1 and x[0] < 2.34, Tc_list)))
+Tc_list_Cv = np.array(Tc_list_Cv)
+Tc_list_Chi = np.array(Tc_list_Chi)
+# print(Tc_list)
 
 model_lin = odr.Model(f_lin)
-y = Tc_list[:,0]
-weights_lin = np.power(Tc_list[:,1], -2)
-x = np.power(Tc_list[:,2], -1)
-Data = odr.Data(x, y, weights_lin)
-odr_lin = odr.ODR(Data, model_lin, (1, 2.2))
-output = odr_lin.run()
+y_Cv = Tc_list_Cv[:,0]
+y_Chi = Tc_list_Chi[:,0]
+weights_lin_Cv = np.power(Tc_list_Cv[:,1], -2)
+weights_lin_Chi = np.power(Tc_list_Chi[:,1], -2)
+x_Cv = np.power(Tc_list_Cv[:,2], -1)
+x_Chi = np.power(Tc_list_Chi[:,2], -1)
+Data_Cv = odr.Data(x_Cv, y_Cv, weights_lin_Cv)
+Data_Chi = odr.Data(x_Chi, y_Chi, weights_lin_Chi)
+odr_lin_Cv = odr.ODR(Data_Cv, model_lin, (1, 2.2))
+odr_lin_Chi = odr.ODR(Data_Chi, model_lin, (1, 2.2))
+output_Cv = odr_lin_Cv.run()
+output_Chi = odr_lin_Chi.run()
+# output.pprint()
 
-L_range = np.arange(0, 0.05, 0.01)
+L_range = np.arange(0, 0.051, 0.01)
 
 plt.figure()
-plt.errorbar(x, y, Tc_list[:,1], fmt = "_")
-plt.plot(L_range, f_lin(output.beta, L_range), "r-")
+plt.errorbar(x_Cv, y_Cv, Tc_list_Cv[:,1], fmt = "r_")
+plt.errorbar(x_Chi, y_Chi, Tc_list_Chi[:,1], fmt = "b_")
+plt.plot(L_range, f_lin(output_Cv.beta, L_range), "r-", label = "Cv")
+plt.plot(L_range, f_lin(output_Chi.beta, L_range), "b-", label = "Chi")
 plt.xlabel("$L^{-1}$")
 plt.ylabel("Tc")
+plt.legend()
 plt.tight_layout()
 plt.savefig("Data/Problem8/Tc_plot.png")
 
 print("\n")
-print(f"Tc = {output.beta[0]} +/- {output.sd_beta[0]}")
+print(f"Using Cv: Tc = {output_Cv.beta[1]} +/- {output_Cv.sd_beta[1]}")
+print(f"Using Chi: Tc = {output_Chi.beta[1]} +/- {output_Chi.sd_beta[1]}")
